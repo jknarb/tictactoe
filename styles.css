@@ -1,0 +1,42 @@
+* {
+    border: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Section Container (all) */
+
+.all-container {
+    width: 100%;
+    height: 500px;
+    padding: 5%;
+    border: 1px solid red;
+    background-color: lightslategray;
+}
+
+.gameboard-container {
+    height: 100%;
+    width: 100%;
+}
+
+.gameboard {
+    table-layout: fixed;
+    overflow: hidden;
+    width: 100%;
+    min-height: 350px;
+    max-height: 350px;
+    border: 2px solid black;
+    text-align: center;
+}
+
+.inputDiv {
+    height: 20px;
+}
+
+.gameBoardRow {
+    background-color: beige;
+}
+
+.gameBoardCell {
+    border: 3px solid black;
+}
