@@ -1,193 +1,193 @@
-//player turn toggle
-let playerToggle = true;
+const gameDOM = (function(){
 
-//Object to store player 1 vs player 2 moves
-const player1 = {
+'use strict';
 
-    player: "player1",
-    playerPositions:[],
-    rowCounts: {},
-    cellCounts: {},
+    return {
+            gameBoardContainer: document.querySelector(`div[class="gameboard-container"]`),
 
-    resetCounts: function () {
-        this.rowCounts = {};
-        this.cellCounts = {};
-    }
-}
+            startGameButton: document.getElementById("start-game"),
 
-const player2 = {
+            createSquares: function createSquares( i ) {
+                const div = document.createElement("div");
+                div.classList.add(i, "square");
+                this.gameBoardContainer.appendChild(div);
+                return div;
+            },
 
-    player: "player2",
-    playerPositions: [],
-    rowCounts: {},
-    cellCounts: {},
+            createGameBoard: function ( ) {
+                const divsCreated = [];
+                let i = 0;
+                const numOfDivs = 9;
+                for (i; i < numOfDivs; i++) {
 
-    resetCounts: function () {
-        this.rowCounts = {};
-        this.cellCounts = {};
-    }
-}
+                    divsCreated.push(this.createSquares(i));
+                    this.gameBoardContainer.appendChild(divsCreated[i]);
 
-
-// Start Game button to display Game board
-const gameBoard = (( ) => {
-
-    'use strict';
-
-    //DOM Selector
-    const startButton = document.getElementById("start-game"); //Start game button
-    const gameBoardContainer = document.querySelector(`div[class="gameboard-container"]`); //Game board container to add the game board into this div
-    const tbl = document.createElement("table"); //Create table element used for the game of tictactoe
-
-    //Start game button event handler
-    startButton.addEventListener("click", ( ) =>{
-
-        //Insert 3 rows with the classes to identify each row + with each row created create 3 cells with class to identify each cell
-        for (let i = 0; i < 3; i++) {
-
-            const tblRow = tbl.insertRow();
-            tblRow.classList.add("row" + i, "gameBoardRow");
-
-                for (let j = 0; j < 3; j++) {
-                    const tableData = tblRow.insertCell();
-                    tableData.classList.add("cell" + j, "gameBoardCell");
-                    tableData.innerHTML = "<div class='inputDiv'> </div>";//Additional div inside the cells so that dynamically added text/img/svg does not affect the height of each boxes
                 }
-        }
+            },
+
+            inputSymbols: function inputSymbols (  ) {
+            },
         
-        tbl.classList.add("gameboard");
-        gameBoardContainer.appendChild(tbl);
+            boxClicked: function boxClicked ( e ) {
+                const divClicked = e.target;
+                if (divClicked.tagName != "DIV") return;
+                const divClickedChildren = Array.from(divClicked.children);
+                if (divClickedChildren.length != 0) {
+                    return;
+                } else {
+                    if (gameflow.playerTurn === true) {
+                        divClicked.innerHTML = "<i class='fas fa-times'></i>";                        
+                        gameFunctions.positionEvaluator( e );
+                        gameflow.playerTurn = false;
+                    } else {
+                        divClicked.innerHTML = "<i class='far fa-circle'></i>";
+                        gameFunctions.positionEvaluator( e );
+                        gameflow.playerTurn = true;
+                    }
+                }
+            },
 
-    }, {once: true});
+            // Modal
 
-
-    //Event handler for td element when clicked
-    tbl.addEventListener("click", ( e ) => {
-
-        const tdClicked = e.target.closest("td"); //Select the closest element which is a td
-        
-        if (!tdClicked) return;
-
-        const inputDiv = tdClicked.firstChild; //Selecting the Div (should be child of td);
-
-        //Edit the content of the input div to have an "x" or an "o"
-        gameFunction(tdClicked, inputDiv);
-        
-    });
+            //Modal selector
+            modal: document.getElementById("myModal"),
+            //Modal Win Message to display
+            modalMessage: document.querySelector(".winMessage"),
+            //close modal
+            close: document.getElementsByClassName("close")[0],
+    }
 
 }) ( );
 
-const getPositions = (r,t) => {
+const gameFunctions = (function ( ){
 
-    const boxParentClassList = r.parentElement.classList;
-    const boxParentArray = Array.from(boxParentClassList);
-    const rowClicked = boxParentArray[0];
+    'use strict';
 
-    const boxClassList = r.classList
-    const boxClassArray = Array.from(boxClassList);
-    const cellClicked = boxClassArray[0];
+    return {
 
-    if (t === false) {
-        let positionArray = [rowClicked, cellClicked];
-        player2.playerPositions.push(positionArray);
-    } else if (!t === false) {
-        let positionArray = [rowClicked, cellClicked];
-        player1.playerPositions.push(positionArray);
-    }
+        player1: {
+            player: "player1",
+            symbol: "x",
+            positions: []
+        },
 
-}
+        player2: {
+            player: "player2",
+            symbol: "o",
+            positions: []
+        },
 
-const positionEvaluator = ( e ) => {
+        winConditionsObject: {
+            winByRows: {
+                row1: [0,1,2],
+                row2: [3,4,5],
+                row3: [6,7,8]
+            },
+            winByColumns: {
+                column1: [0,3,6],
+                column2: [1,4,7],
+                column3: [2,5,8]
+            },
+            winDiagonal: {
+                diagonal1: [0,4,8],
+                diagonal2: [6,4,2]
+            }
+        },
 
-    console.log(e);
+        checkCondition: function (array, playerArr) {
+            console.log(array, playerArr);
+            const checkArray = array.every(position => playerArr.includes(position))
+            console.log(checkArray);
+            return checkArray;
+        },
 
-    const positions = e.playerPositions;
+        winEvaluator: function ( playerTurn, divClass, e ) {
 
-    console.log(positions);
+            let i = 0;
+            let j = 0;
+            let numOfConditions = 3;
+            let numOfConditionsdiagonal = 2;
 
-    let rowCounts = e.rowCounts;
-    let cellCounts = e.cellCounts;
+            const winByRowConditions = Object.values(this.winConditionsObject.winByRows);
+            const winByColumnConditions = Object.values(this.winConditionsObject.winByColumns);
+            const winByDiagonalConditions = Object.values(this.winConditionsObject.winDiagonal);
 
-    e.resetCounts();
+            const playerPositions = playerTurn;
 
-    positions.forEach(function(e) {
-        rowCounts[e[0]] = (rowCounts[e[0]] || 0)+1;
-        cellCounts[e[1]] = (cellCounts[e[1]] || 0)+1;
-    });
-    
-    const rowArray = Object.values(rowCounts);
-    console.log(rowArray);
-    const cellArray = Object.values(cellCounts);
-    console.log(cellArray);
-    const winbyRows = rowArray.includes(3);
-    const winbyCells = cellArray.includes(3);
-    if (winbyRows === true || winbyCells === true) {
+            console.log(playerPositions);
+            playerPositions.push(divClass);
 
-        if (e.player == "player1") {
-            console.log("player1 win beeetcchhh!");
-        } else if (e.player == "player2") {
-            console.log("player2 wins hehehe!");
+            for (i; i < numOfConditions; i++) {
+                    
+                const checkConditionRows = this.checkCondition(winByRowConditions[i],playerPositions);
+                const checkConditionsColumns = this.checkCondition(winByColumnConditions[i],playerPositions);
+                
+                if (checkConditionRows === true || checkConditionsColumns === true) {
+                    
+                    gameDOM.modal.style.display = "block";
+                    gameDOM.modalMessage.textContent = `${e} wins beetch`;
+                    return;
+                } else {
+                    numOfConditions = 2;
+                    for (j; j < numOfConditionsdiagonal; j++) {
+                    console.log("checking...");
+                    const checkConditiondiagonal = this.checkCondition(winByDiagonalConditions[j],playerPositions);
+                    if (checkConditiondiagonal === true) {
+                            gameDOM.modal.style.display = "block";
+                            gameDOM.modalMessage.textContent = `${e} wins beetch`;
+                            return;
+                        }
+                    }
+                    numOfConditions = 3;
+                }
+            }
+        },
+
+        positionEvaluator: function positionEvaluator( e ) {
+
+            const inputDiv = e.target;
+            const inputDivClass = parseInt(inputDiv.classList[0]);
+
+            if (gameflow.playerTurn == true) {
+                
+                this.winEvaluator(this.player1.positions,inputDivClass,"Player 1");
+
+            } else {
+
+                this.winEvaluator(this.player2.positions,inputDivClass,"Player 2");
+
+            }
+
         }
 
-    } else if (rowArray == [1,1,1] && cellArray == [1,1,1]) {
-
-        if (e.player == "player1") {
-            console.log("player1 win beeetcchhh!");
-        } else if (e.player == "player2") {
-            console.log("player2 wins hehehe!");
-        }
-
-    } 
-    
-    else {
-        return;
     }
 
-}
-
-const gameEvaluator = ( e ) => {
-
-    console.log(e);
-
-    if (e === true) {
-
-        positionEvaluator(player1);
-
-    } else if (e === false) {
-
-        positionEvaluator(player2);
-
-    }
-
-}
+}) ( );
 
 
-//Move game function out of the iffe module and run it when target is clicked.
-const gameFunction = (e,d) => {
+const gameflow = (function ( ){
 
-    const input = d;
-    const tdClicked = e;
+    'use strict';
 
-    if (playerToggle === false) {
+    let playerTurn = true;
 
-        input.innerHTML = "<i class='far fa-circle'></i>";
+    //1. Start game with creating board
+    gameDOM.startGameButton.addEventListener("click", ( ) => {
+        gameDOM.createGameBoard ( );
+    }, {once: true})
+
+    //2. Box clicked --> 1. Change DOM to have correct sign. 2. Save positions of each symbol in arrray 3. Evaluate if win conditions are met.
+    gameDOM.gameBoardContainer.addEventListener("click", function ( e ) {
+
+        gameDOM.boxClicked(e);
+
+    })
+
+    return {
+
+        playerTurn: playerTurn
         
-        getPositions(tdClicked, playerToggle);
-        gameEvaluator(false);
-
-        playerToggle = true;
-    } else if (playerToggle === true) {
-
-        input.innerHTML = "<i class='fas fa-times'></i>";
-
-        getPositions(tdClicked, playerToggle);
-        gameEvaluator(true);
-
-        playerToggle = false;
     }
     
-};
-
-//Add logic to toggle between xs and os
-//Add function to evaluate winnders and losers
-//Add player 1 and player 2
+}) ( );

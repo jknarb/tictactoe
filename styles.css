@@ -6,17 +6,41 @@
 
 /* Section Container (all) */
 
-.all-container {
-    width: 100%;
-    height: 500px;
-    padding: 5%;
-    border: 1px solid red;
-    background-color: lightslategray;
+body {
+    text-align: center;
+    background-color: lightgray;
 }
 
-.gameboard-container {
-    height: 100%;
+.all-container {
     width: 100%;
+    height: 550px;
+    padding: 5%;
+    background-color: lightgray;
+}
+
+h1 {
+    margin: 2% auto;
+}
+
+/* Game Button */
+
+#start-game {
+    margin: 2% auto;
+    width: 200px;
+    height: 50px;
+    border: 2px solid black;
+    border-radius: 2%;
+}
+
+/* Game Board */
+
+.gameboard-container {
+    margin: 0 auto;
+    height: 100%;
+    width: 70%;
+    border: 2px solid whitesmoke;
+    display: grid;
+    grid-template-columns: auto auto auto;
 }
 
 .gameboard {
@@ -29,14 +53,99 @@
     text-align: center;
 }
 
-.inputDiv {
-    height: 20px;
+.square {
+    background-color: blueviolet;
+    overflow: hidden;
+    text-align: center;
+    padding: 40%;
+    min-width: 150px;
+    min-height: 150px;
+    max-height: 150px;
 }
 
-.gameBoardRow {
-    background-color: beige;
+.fas {
+    transform: scale(2);
 }
 
-.gameBoardCell {
-    border: 3px solid black;
+.far {
+    transform: scale(2);
+}
+
+[class="0 square"],[class="3 square"],[class="6 square"] {
+    border-right: 2px solid beige;
+}
+
+[class="1 square"],[class="4 square"],[class="7 square"] {
+    border-left: 2px solid beige;
+    border-right: 2px solid beige;
+}
+
+[class="2 square"],[class="5 square"],[class="8 square"] {
+    border-left: 2px solid beige;
+}
+
+[class="0 square"],[class="1 square"],[class="2 square"] {
+    border-bottom: 2px solid beige;
+}
+
+[class="3 square"],[class="4 square"],[class="5 square"] {
+    border-bottom: 2px solid beige;
+    border-top: 2px solid beige;
+}
+
+[class="6 square"],[class="7 square"],[class="8 square"] {
+    border-top: 2px solid beige;
+}
+
+.game-status-container {
+    height: 200px;
+    width: 100%;
+    padding: 2%;
+    text-align: center;
+}
+
+/* Modal Pop-Up */
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+  /* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    height: 300px;
+}
+
+.winMessage {
+    font-size: xx-large;
+    font-weight: 900;
+    margin-top: 5%;
+}
+
+  /* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
